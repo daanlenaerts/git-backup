@@ -195,12 +195,8 @@ func getGitLabReposFromURL(client *http.Client, token, url string) ([]string, er
 
 		// Add repository URLs to our list
 		for _, repo := range repos {
-			// Prefer SSH URL for private repos, HTTPS for public
-			if repo.Visibility == "private" {
-				allRepos = append(allRepos, repo.SSHURLToRepo)
-			} else {
-				allRepos = append(allRepos, repo.HTTPURLToRepo)
-			}
+			// Always use HTTPS URLs for consistency and to avoid SSH setup issues
+			allRepos = append(allRepos, repo.HTTPURLToRepo)
 		}
 
 		// If we got fewer repos than the page size, we're done

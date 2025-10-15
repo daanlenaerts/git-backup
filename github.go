@@ -194,12 +194,8 @@ func getReposFromURL(client *http.Client, token, url string) ([]string, error) {
 
 		// Add repository URLs to our list
 		for _, repo := range repos {
-			// Prefer SSH URL for private repos, HTTPS for public
-			if repo.Private {
-				allRepos = append(allRepos, repo.SSHURL)
-			} else {
-				allRepos = append(allRepos, repo.CloneURL)
-			}
+			// Always use HTTPS URLs for consistency and to avoid SSH setup issues
+			allRepos = append(allRepos, repo.CloneURL)
 		}
 
 		// If we got fewer repos than the page size, we're done

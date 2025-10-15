@@ -35,10 +35,16 @@ func BackupRepo(repo string, token string) error {
 	authRepo := repo
 	if token != "" && strings.HasPrefix(repo, "https://") {
 		// Insert token into HTTPS URL for authentication
-		// Format: https://token@github.com/user/repo.git
+		// Format: https://oauth2:token@gitlab.com/user/repo.git or https://token@github.com/user/repo.git
 		parts := strings.Split(repo, "://")
 		if len(parts) == 2 {
-			authRepo = fmt.Sprintf("%s://%s@%s", parts[0], token, parts[1])
+			// Check if it's a GitLab URL (gitlab.com) and use oauth2:token format
+			if strings.Contains(parts[1], "gitlab.com") {
+				authRepo = fmt.Sprintf("%s://oauth2:%s@%s", parts[0], token, parts[1])
+			} else {
+				// For GitHub and other services, use token@host format
+				authRepo = fmt.Sprintf("%s://%s@%s", parts[0], token, parts[1])
+			}
 		}
 	}
 
