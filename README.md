@@ -33,7 +33,7 @@ docker run -d \
   -v $(pwd)/backups:/app/repos \
   -e REPEAT_INTERVAL="$REPEAT_INTERVAL" \
   --name git-backup \
-  git-backup ./git-backup --repeat 60
+  git-backup
 ```
 
 ## Environment Variables
