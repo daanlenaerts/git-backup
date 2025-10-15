@@ -70,7 +70,6 @@ func backupGithub(token string) error {
 		err := BackupRepo(repo, token)
 		if err != nil {
 			fmt.Println("Error cloning repository:", err)
-			return err
 		}
 	}
 
@@ -92,7 +91,6 @@ func backupGitLab(token string) error {
 		err := BackupRepo(repo, token)
 		if err != nil {
 			fmt.Println("Error cloning repository:", err)
-			return err
 		}
 	}
 

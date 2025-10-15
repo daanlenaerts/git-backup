@@ -53,10 +53,10 @@ func BackupRepo(repo string, token string) error {
 		cmd.Dir = repoPath
 	}
 
-	// Run the command and capture any errors
-	err := cmd.Run()
+	// Run the command and capture output and errors
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("failed to clone repository %s: %v", repo, err)
+		return fmt.Errorf("failed to clone repository %s: %v\nGit output: %s", repo, err, string(output))
 	}
 
 	fmt.Printf("Successfully updated %s in %s\n", repo, repoName)
