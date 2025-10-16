@@ -1,6 +1,7 @@
 # Git Backup
 
 A Go application that backs up GitHub and GitLab repositories.
+It supports sending Telegram notifications when anything goes wrong.
 
 ## Docker Usage
 
