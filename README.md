@@ -22,6 +22,8 @@ export REPEAT_INTERVAL=60 # every 60 minutes
 docker run --rm \
   -e GITHUB_TOKENS="$GITHUB_TOKENS" \
   -e GITLAB_TOKENS="$GITLAB_TOKENS" \
+  -e TELEGRAM_BOT_TOKEN="$TELEGRAM_BOT_TOKEN" \
+  -e TELEGRAM_CHAT_ID="$TELEGRAM_CHAT_ID" \
   -v $(pwd)/backups:/app/repos \
   -e REPEAT_INTERVAL="$REPEAT_INTERVAL" \
   git-backup
@@ -30,6 +32,8 @@ docker run --rm \
 docker run -d \
   -e GITHUB_TOKENS="$GITHUB_TOKENS" \
   -e GITLAB_TOKENS="$GITLAB_TOKENS" \
+  -e TELEGRAM_BOT_TOKEN="$TELEGRAM_BOT_TOKEN" \
+  -e TELEGRAM_CHAT_ID="$TELEGRAM_CHAT_ID" \
   -v $(pwd)/backups:/app/repos \
   -e REPEAT_INTERVAL="$REPEAT_INTERVAL" \
   --name git-backup \
@@ -41,6 +45,8 @@ docker run -d \
 - `GITHUB_TOKENS`: Comma-separated list of GitHub personal access tokens
 - `GITLAB_TOKENS`: Comma-separated list of GitLab personal access tokens
 - `REPEAT_INTERVAL`: Run the backup every N minutes (default: run once)
+- `TELEGRAM_BOT_TOKEN`: The token for the Telegram bot
+- `TELEGRAM_CHAT_ID`: The chat ID for the Telegram bot
 
 ## Notes
 

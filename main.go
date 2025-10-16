@@ -31,6 +31,8 @@ func main() {
 		return
 	}
 
+	SendTelegramMessage("Starting git-backup")
+
 	for {
 
 		for _, token := range githubTokens {
@@ -60,6 +62,7 @@ func backupGithub(token string) error {
 	repos, err := GetAllGithubRepos(token)
 	if err != nil {
 		fmt.Println("Error getting github repositories:", err)
+		SendTelegramMessage("Error getting github repositories: " + err.Error())
 		return err
 	}
 
@@ -70,6 +73,7 @@ func backupGithub(token string) error {
 		err := BackupRepo(repo, token)
 		if err != nil {
 			fmt.Println("Error cloning repository:", err)
+			SendTelegramMessage("Error cloning repository: " + err.Error())
 		}
 	}
 
@@ -81,6 +85,7 @@ func backupGitLab(token string) error {
 	repos, err := GetAllGitLabRepos(token)
 	if err != nil {
 		fmt.Println("Error getting gitlab repositories:", err)
+		SendTelegramMessage("Error getting gitlab repositories: " + err.Error())
 		return err
 	}
 
@@ -91,6 +96,7 @@ func backupGitLab(token string) error {
 		err := BackupRepo(repo, token)
 		if err != nil {
 			fmt.Println("Error cloning repository:", err)
+			SendTelegramMessage("Error cloning repository: " + err.Error())
 		}
 	}
 
