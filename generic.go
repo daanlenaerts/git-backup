@@ -51,7 +51,7 @@ func BackupRepo(repo string, token string) error {
 	if _, err := os.Stat(repoPath); os.IsNotExist(err) {
 		fmt.Printf("Cloning repository %s to %s\n", repo, repoPath)
 		// Clone the repository
-		cmd = exec.Command("git", "clone", authRepo, repoPath)
+		cmd = exec.Command("git", "clone", "--mirror", authRepo, repoPath)
 	} else {
 		fmt.Printf("Fetching updates from repository %s to %s\n", repo, repoPath)
 		// Pull updates from the existing repository
