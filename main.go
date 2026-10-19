@@ -35,19 +35,8 @@ func main() {
 
 	for {
 
-		for _, token := range githubTokens {
-			err := backupGithub(token)
-			if err != nil {
-				fmt.Println("Error backing up github:", err)
-			}
-		}
-
-		for _, token := range gitlabTokens {
-			err := backupGitLab(token)
-			if err != nil {
-				fmt.Println("Error backing up gitlab:", err)
-			}
-		}
+		backupAll("GitHub", githubTokens, GetAllGithubRepos)
+		backupAll("GitLab", gitlabTokens, GetAllGitLabRepos)
 
 		if repeatInt == -1 {
 			break
@@ -57,48 +46,39 @@ func main() {
 
 }
 
-func backupGithub(token string) error {
-	// Get all github repositories
-	repos, err := GetAllGithubRepos(token)
-	if err != nil {
-		fmt.Println("Error getting github repositories:", err)
-		SendTelegramMessage("Error getting github repositories: " + err.Error())
-		return err
+// backupAll lists the repositories visible to each token, then backs up each
+// repository once, trying every token that can see it until one succeeds.
+func backupAll(provider string, tokens []string, listRepos func(string) ([]string, error)) {
+	var repos []string
+	repoTokens := map[string][]string{}
+
+	for _, token := range tokens {
+		tokenRepos, err := listRepos(token)
+		if err != nil {
+			fmt.Printf("Error getting %s repositories: %v\n", provider, err)
+			SendTelegramMessage(fmt.Sprintf("Error getting %s repositories: %v", provider, err))
+			continue
+		}
+		for _, repo := range tokenRepos {
+			if _, seen := repoTokens[repo]; !seen {
+				repos = append(repos, repo)
+			}
+			repoTokens[repo] = append(repoTokens[repo], token)
+		}
 	}
 
-	fmt.Println("Github repositories:", repos)
+	fmt.Printf("%s repositories: %v\n", provider, repos)
 
-	// Clone the repositories
 	for _, repo := range repos {
-		err := BackupRepo(repo, token)
+		var err error
+		for _, token := range repoTokens[repo] {
+			if err = BackupRepo(repo, token); err == nil {
+				break
+			}
+		}
 		if err != nil {
 			fmt.Println("Error cloning repository:", err)
 			SendTelegramMessage("Error cloning repository: " + err.Error())
 		}
 	}
-
-	return nil
-}
-
-func backupGitLab(token string) error {
-	// Get all gitlab repositories
-	repos, err := GetAllGitLabRepos(token)
-	if err != nil {
-		fmt.Println("Error getting gitlab repositories:", err)
-		SendTelegramMessage("Error getting gitlab repositories: " + err.Error())
-		return err
-	}
-
-	fmt.Println("GitLab repositories:", repos)
-
-	// Clone the repositories
-	for _, repo := range repos {
-		err := BackupRepo(repo, token)
-		if err != nil {
-			fmt.Println("Error cloning repository:", err)
-			SendTelegramMessage("Error cloning repository: " + err.Error())
-		}
-	}
-
-	return nil
 }
