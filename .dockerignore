@@ -38,3 +38,7 @@ tests/
 # Temporary files
 tmp/
 temp/
+
+# Secrets and local backup data
+.env
+repos/
