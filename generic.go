@@ -54,6 +54,12 @@ func BackupRepo(repo string, token string) error {
 		cmd = exec.Command("git", "clone", "--mirror", authRepo, repoPath)
 	} else {
 		fmt.Printf("Fetching updates from repository %s to %s\n", repo, repoPath)
+		// Refresh the remote URL so rotated tokens are picked up
+		setURL := exec.Command("git", "remote", "set-url", "origin", authRepo)
+		setURL.Dir = repoPath
+		if output, err := setURL.CombinedOutput(); err != nil {
+			return fmt.Errorf("failed to update remote of %s: %v\nGit output: %s", repo, err, string(output))
+		}
 		// Pull updates from the existing repository
 		cmd = exec.Command("git", "fetch", "--all")
 		cmd.Dir = repoPath
